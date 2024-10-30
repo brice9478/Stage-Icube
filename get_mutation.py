@@ -48,8 +48,6 @@ def divide_and_conquer(total_data, count, error):
         total_data[count][i + 1].append(data[findex(data, "IdList") + (i * 3 + 2)])
         if data[findex(data, "IdList") + (i * 3 + 2) + 2] == "/IdList":
             break
-    # if count == len(total_data) - 2:
-    #     done = True
 
 def good_or_evil(total_data, count):
     if len(total_data[count]) == 1:
@@ -61,14 +59,7 @@ def good_or_evil(total_data, count):
             url = url + ", "
     url = url + "&retmode=fasta&BARULI9478"
     print(url)
-    # try:
     response = requests.get(url)
-    # except:
-    #     if error >= 5:
-    #         total_data[count].append(["Aknown"])
-    #         return
-    #     good_or_evil(total_data, count, error + 1)
-    #     return
     data = ''.join(response.text)
     data = re.sub(r"[\n\t]", '', data)
     data = re.split(r"[><]", data)
@@ -77,7 +68,6 @@ def good_or_evil(total_data, count):
             del data[i]
             if i == len(data) - 2:
                 break
-    # print(data)
     print("_____________________________________________________")
     positions = findexstr(data, "germline_classification")
     for glc in range(len(positions) - 1):
@@ -93,20 +83,8 @@ def good_or_evil_recheck(total_data, count):
         if len(total_data[count][i]) >= 3:
             continue
         url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&id=" + str(total_data[count][i][1]) + "&retmode=fasta&BARULI9478"
-    # for i in range(1, len(total_data[count]) - 1):
-    #     url = url + str(total_data[count][i][1])
-    #     if i < len(total_data[count]) - 2:
-    #         url = url + ", "
-    # url = url + "&retmode=fasta&BARULI9478"
         print(url)
-    # try:
         response = requests.get(url)
-    # except:
-    #     if error >= 5:
-    #         total_data[count].append(["Aknown"])
-    #         return
-    #     good_or_evil(total_data, count, error + 1)
-    #     return
         data = ''.join(response.text)
         data = re.sub(r"[\n\t]", '', data)
         data = re.split(r"[><]", data)
@@ -115,7 +93,6 @@ def good_or_evil_recheck(total_data, count):
                 del data[k]
                 if k == len(data) - 2:
                     break
-        # print(data)
         print("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||")
         positions = findexstr(data, "germline_classification")
         total_data[count][i].append(data[positions[0] + 2])
@@ -132,21 +109,19 @@ if os.path.exists("gen_mutation.pickle"):
 else:
     for i in range(len(content['B']) - 1):
         total_data.append([content['B' + str(i + 2)].value])
-# print(total_data[0][1][0])
+
 
 for count in range(len(total_data) - 1):
     print(len(total_data[count]), total_data[count])
     if len(total_data[count]) > 1:
         continue
     threading.Thread(target=divide_and_conquer, daemon=False, args=(total_data, count, 0)).start()
-    time.sleep(0.5)
-    if threading.active_count() > 3:
-        time.sleep(1)
-    # while threading.active_count() >= 3:
-    #     time.sleep(0.5)
+    while threading.active_count() >= 4:
+        time.sleep(0.1)
+
 print(total_data)
 iferror = 0
-while threading.active_count() > 1 and iferror < 20:
+while threading.active_count() > 1 and iferror < 10:    #security mesure
     iferror = iferror + 1
     print("threads:", threading.active_count())
     time.sleep(1)
@@ -158,19 +133,17 @@ for count in range(len(total_data) - 1):
     if len(total_data[count]) <= 1:
         continue
     threading.Thread(target=good_or_evil, daemon=False, args=(total_data, count)).start()
-    time.sleep(0.5)
-    if threading.active_count() > 3:
-        time.sleep(1)
+    while threading.active_count() >= 4:
+        time.sleep(0.1)
 
 for count in range(len(total_data) - 1):
     if len(total_data[count]) <= 1:
         continue
     threading.Thread(target=good_or_evil_recheck, daemon=False, args=(total_data, count)).start()
-    time.sleep(0.5)
-    if threading.active_count() > 3:
-        time.sleep(1)
+    while threading.active_count() >= 4:
+        time.sleep(0.1)
 
-while threading.active_count() > 1 and iferror < 20:
+while threading.active_count() > 1 and iferror < 10:    #security mesure
     iferror = iferror + 1
     print("threads:", threading.active_count())
     time.sleep(1)
