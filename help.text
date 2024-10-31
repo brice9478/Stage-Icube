@@ -1,0 +1,5 @@
+First execute
+
+python3 get_orthologues.py
+
+That will create the file needed for the other programs
