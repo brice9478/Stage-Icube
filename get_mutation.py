@@ -37,7 +37,7 @@ def findexstr(data, str):
 def divide_and_conquer(total_data, count, error, rps):
     url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&term=" + str(total_data[count][0]) + "&retmode=fasta"
     try:
-        params = {'api_key': "565c5d51a6381d3341795f365022daac3d08"}
+        params = {'api_key': "?"} #personnal
         response = requests.get(url, timeout=5, params=params)
     except:
         if error >= 5:
