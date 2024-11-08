@@ -69,7 +69,7 @@ def check_multiple_pdi(pdi, data, positions, total_data, count):
 def divide_and_conquer(total_data, count, error, rps):
     url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&term=" + str(total_data[count][0]) + "&retmode=fasta"
     try:
-        params = {'api_key': "4ac34d378f1cdea8aba9f87ba0b316a18309"} # /!\
+        params = {'api_key': "api key"} # /!\
         response = requests.get(url, timeout=5, params=params)
     except:
         if error >= 5:
