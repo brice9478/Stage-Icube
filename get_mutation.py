@@ -70,18 +70,22 @@ def divide_and_conquer(total_data, count, error, rps):
     url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&term=" + str(total_data[count][0]) + "&retmode=fasta"
     try:
         params = {'api_key': argv[1]} # /!\
-        response = requests.get(url, timeout=5, params=params)
+        response = requests.get(url, timeout=10, params=params)
     except:
         if error >= 5:
             total_data[count].append(["Aknown"])
-            if len(rps) >= 10:
-                del rps[0]
+            off = 0
+            while rps[off][1] != False:
+                off += 1
+            rps[off][1] = count_time[0]
             return
         print("/!\ ---------> loop ?", str(total_data[count][0]))
         divide_and_conquer(total_data, count, error + 1, rps)
         return
-    if len(rps) >= 10:
-        del rps[0]
+    off = 0
+    while rps[off][1] != False:
+        off += 1
+    rps[off][1] = count_time[0]
     data = ''.join(response.text)
     data = re.sub(r"[\n \t]", '', data)
     data = re.split(r"[><]", data)
@@ -103,7 +107,7 @@ def divide_and_conquer(total_data, count, error, rps):
 
 
 
-def good_or_evil(total_data, count):
+def good_or_evil(total_data, count, error):
     if len(total_data[count]) == 1:
         return
     url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&id="
@@ -113,10 +117,26 @@ def good_or_evil(total_data, count):
             url = url + ", "
     url = url + "&retmode=fasta"
     print(url)
-    params = {'api_key': argv[1]}
-    response = requests.get(url, timeout=10, params=params)
-    if len(rps) >= 10:
-        del rps[0]
+    try:
+        params = {'api_key': argv[1]} # /!\
+        response = requests.get(url, timeout=10, params=params)
+    except:
+        if error >= 5:
+            total_data[count].append(["Aknown"])
+            off = 0
+            while rps[off][1] != False:
+                off += 1
+            rps[off][1] = count_time[0]
+            return
+        print("/!\ ---------> loop ?", str(total_data[count][0]))
+        good_or_evil(total_data, count, error + 1)
+        return
+    # if len(rps) >= 10:
+    #     del rps[0]
+    off = 0
+    while rps[off][1] != False:
+        off += 1
+    rps[off][1] = count_time[0]
     data = ''.join(response.text)
     data = re.sub(r"[\n\t]", '', data)
     data = re.split(r"[><]", data)
@@ -160,10 +180,9 @@ def good_or_evil(total_data, count):
 
 
 
-def timer(count_time):
+def timer(count_time, start_time):
     while True:
-        time.sleep(0.1)
-        count_time[0] += 0.1
+        count_time[0] = time.time() - start_time[0]
 
 
 if len(argv) == 1 or len(argv) > 3:
@@ -212,8 +231,9 @@ if len(argv) == 3:
 
 
 
+start_time = [time.time()]
 count_time = [0]
-threading.Thread(target=timer, daemon=True, args=(count_time,)).start()
+threading.Thread(target=timer, daemon=True, args=(count_time, start_time)).start()
 rps = []
 print("threads", threading.active_count())
 for count in range(len(total_data)):
@@ -221,15 +241,19 @@ for count in range(len(total_data)):
     if len(total_data[count]) > 1: # > 1
         continue
     print("time :", count_time[0])
-    rps.append(count_time[0])
+    rps.append([count_time[0], False])
     threading.Thread(target=divide_and_conquer, daemon=True, args=(total_data, count, 0, rps)).start()
-    while count_time[0] - rps[0] <= 1.0 or len(rps) >= 10:
+    while len(rps) >= 10:
+        if rps[0][1] != False and count_time[0] - rps[0][1] > 1:
+            break
         time.sleep(0.1)
+    if rps[0][1] != False:
+        del rps[0]
     with open("gen_mutation.pickle", "wb") as file:
         pickle.dump(total_data, file)
 print(total_data)
 iferror = 0
-while threading.active_count() > 2 and iferror < 10:    #security mesure but could be removed with the reinitialisation of count_time and rps
+while threading.active_count() > 2 and iferror < 10:    #security mesure --> waiting for all previous threads to finish
     iferror = iferror + 1
     print("threads:", threading.active_count())
     time.sleep(0.5)
@@ -238,15 +262,20 @@ with open("gen_mutation.pickle", "wb") as file:
 
 
 
+start_time[0] = time.time()
 count_time[0] = 0
 rps = []
 for count in range(len(total_data)):
     if len(total_data[count]) <= 1:
         continue
-    rps.append(count_time[0])
-    threading.Thread(target=good_or_evil, daemon=False, args=(total_data, count)).start()
-    while count_time[0] - rps[0] <= 1.0 or len(rps) >= 10:
+    rps.append([count_time[0], False])
+    threading.Thread(target=good_or_evil, daemon=True, args=(total_data, count, 0)).start()
+    while len(rps) >= 10:
+        if rps[0][1] != False and count_time[0] - rps[0][1] > 1:
+            break
         time.sleep(0.1)
+    if rps[0][1] != False:
+        del rps[0]
 while threading.active_count() > 2 and iferror < 10:    #security mesure
     iferror = iferror + 1
     print("threads:", threading.active_count())
