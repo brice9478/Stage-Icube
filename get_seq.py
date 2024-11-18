@@ -29,7 +29,7 @@ def get_request(gen_seq, i, max, error):
             rps[off][1] = count_time[0]
             print("Request : all attempts failed.")
             return
-        print("/!\ ---------> loop ? Error connection. Request sent again.", str(total_data[i][0]))
+        print("/!\ ---------> loop ? Connection error. Request sent again with url", url)
         get_request(total_data, i, max, error + 1)
         return
     data = ''.join(response.text)
