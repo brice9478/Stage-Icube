@@ -79,7 +79,7 @@ def divide_and_conquer(total_data, count, error, rps):
                 off += 1
             rps[off][1] = count_time[0]
             return
-        print("/!\ ---------> loop ?", str(total_data[count][0]))
+        print("/!\ ---------> loop ? Connection error. Request sent again with url :", url)
         divide_and_conquer(total_data, count, error + 1, rps)
         return
     off = 0
@@ -89,21 +89,16 @@ def divide_and_conquer(total_data, count, error, rps):
     data = ''.join(response.text)
     data = re.sub(r"[\n \t]", '', data)
     data = re.split(r"[><]", data)
-    print("DATA SUCCESSFULLY CREATED", str(total_data[count][0]))
     for i in range(len(data)):
         if data[i] == '':
             del data[i]
             if i == len(data) - 2:
                 break
-    print(data)
-    print("--------------------------------------")
     for i in range(int(data[findex(data, "Count") + 1])):
         total_data[count].append(["id"])
         total_data[count][i + 1].append(data[findex(data, "IdList") + (i * 3 + 2)])
         if data[findex(data, "IdList") + (i * 3 + 2) + 2] == "/IdList":
             break
-    print("RESULT :", total_data[count], "\n--------------------------------------")
-    print("END : thread :", threading.active_count(), "accession :", str(total_data[count][0]))
 
 
 
@@ -128,11 +123,9 @@ def good_or_evil(total_data, count, error):
                 off += 1
             rps[off][1] = count_time[0]
             return
-        print("/!\ ---------> loop ?", str(total_data[count][0]))
+        print("/!\ ---------> loop ? Connection error. Request sent again with url :", url)
         good_or_evil(total_data, count, error + 1)
         return
-    # if len(rps) >= 10:
-    #     del rps[0]
     off = 0
     while rps[off][1] != False:
         off += 1
@@ -174,9 +167,6 @@ def good_or_evil(total_data, count, error):
         total_data[count][i + 1].append(pdi[i][1])
         total_data[count][i + 1].append("insertion(s)")
         total_data[count][i + 1].append(pdi[i][2])
-    print("-----------------------------------------")
-    print("RESULT", total_data[count])
-    print("-----------------------------------------")
 
 
 
@@ -237,10 +227,9 @@ threading.Thread(target=timer, daemon=True, args=(count_time, start_time)).start
 rps = []
 print("threads", threading.active_count())
 for count in range(len(total_data)):
-    print(len(total_data[count]), total_data[count])
+    print(count, total_data[count][0])
     if len(total_data[count]) > 1: # > 1
         continue
-    print("time :", count_time[0])
     rps.append([count_time[0], False])
     threading.Thread(target=divide_and_conquer, daemon=True, args=(total_data, count, 0, rps)).start()
     while len(rps) >= 10:
@@ -251,7 +240,6 @@ for count in range(len(total_data)):
         del rps[0]
     with open("gen_mutation.pickle", "wb") as file:
         pickle.dump(total_data, file)
-print(total_data)
 iferror = 0
 while threading.active_count() > 2 and iferror < 10:    #security mesure --> waiting for all previous threads to finish
     iferror = iferror + 1
@@ -266,6 +254,7 @@ start_time[0] = time.time()
 count_time[0] = 0
 rps = []
 for count in range(len(total_data)):
+    print(count, total_data[count][0])
     if len(total_data[count]) <= 1:
         continue
     rps.append([count_time[0], False])
@@ -283,6 +272,5 @@ while threading.active_count() > 2 and iferror < 10:    #security mesure
 
 
 time.sleep(3)
-print(total_data)
 with open("gen_mutation.pickle", "wb") as file:
     pickle.dump(total_data, file)
