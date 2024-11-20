@@ -91,6 +91,7 @@ def get_request(exon_struct, i, max, error):
 
 def true_stop(stop):    #allows to stop the program when "enter" is pressed
     input()
+    print("/!\\ -- Stop request received. The program will end shortly. -- /!\\")
     stop[0] = 1
 
 

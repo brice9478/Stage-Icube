@@ -9,9 +9,6 @@ from io import StringIO
 from sys import argv
 
 
-
-
-
 def create_url(gen_loc, i, max):
     url = "https://www.ebi.ac.uk/proteins/api/coordinates?accession="
     for k in range(0, max):
@@ -53,7 +50,6 @@ def get_request(gen_loc, i, max, error):
         while data[index] != gen_loc[i + k][0]:
             if index >= len(data) - 1:
                 gen_loc[i + k].append("Aknown")
-                # print(gen_loc[i + k], ": Aknown") # print the genes for which no informations were found
                 break
             index += 1
         if index >= len(data):
@@ -81,8 +77,6 @@ def get_request(gen_loc, i, max, error):
             continue
         for info in range(6):
             gen_loc[i + k].append(data[index + info])
-    # for k in range(0, max):
-    #     print(i + k, gen_loc[i + k])
     try:
         off = 0
         while rps[off][1] != False:
@@ -94,6 +88,7 @@ def get_request(gen_loc, i, max, error):
 
 def true_stop(stop):    #allows to stop the program when "enter" is pressed
     input()
+    print("/!\\ -- Stop request received. The program will end shortly. -- /!\\")
     stop[0] = 1
 
 
@@ -162,8 +157,8 @@ rps = []
 stop = []
 stop.append(int(0))
 stop[0] = 0 #just in case
-
 threading.Thread(target=true_stop, daemon=True, args=(stop,)).start()
+
 for i in range(0, len(gen_loc), 100):
     max = 100
     if i + max > len(gen_loc):
@@ -178,7 +173,7 @@ for i in range(0, len(gen_loc), 100):
     try:
         if rps[0][1] != False:
             del rps[0]
-    except:
+    except: #louche
         with open("gen_loc.pickle", "wb") as file:
             pickle.dump(gen_loc, file)
     if stop[0] == 1:
