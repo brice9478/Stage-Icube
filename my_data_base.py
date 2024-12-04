@@ -15,9 +15,14 @@ def list_species_and_id():
     list_specie = list({item[0]: item for item in list_specie}.values())
     return list_specie
 
+def fill_genes():
+    with open("table_genes.pickle", "rb") as file:
+        list_genes = pickle.load(file)
+    return list_genes
 
 connection = sqlite3.connect("mydata.db")
 cursor = connection.cursor()
+print("Executing... create tables")
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS species (
     specie TEXT PRIMARY KEY,
@@ -27,11 +32,11 @@ CREATE TABLE IF NOT EXISTS species (
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS genes (
     accession TEXT PRIMARY KEY,
+    specie TEXT,
     sequence TEXT,
     chromosome TEXT,
     start INTEGER,
-    end INTEGER,
-    specie TEXT
+    end INTEGER
 )
 """)
 cursor.execute("""
@@ -60,7 +65,21 @@ CREATE TABLE IF NOT EXISTS pdi (
 )
 """)
 
-cursor.executemany("INSERT INTO species VALUES (?, ?)", list_species_and_id())
+print("Executing... fill table: species")
+cursor.execute(f"SELECT COUNT(*) FROM species") #on peut mettre {variable} pour inclure le contenu de la variable
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO species VALUES (?, ?)", list_species_and_id())
+else:
+    print("species: table already completed.")
+
+print("Executing... fill table: genes")
+cursor.execute(f"SELECT COUNT(*) FROM genes")
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO genes VALUES (?, ?, ?, ?, ?, ?)", fill_genes())
+else:
+    print("genes: table already completed.")
 
 connection.commit()
 connection.close()
