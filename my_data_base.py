@@ -16,9 +16,20 @@ def list_species_and_id():
     return list_specie
 
 def fill_genes():
-    with open("table_genes.pickle", "rb") as file:
+    with open("table_genes.pickle", "rb") as file: #from the program fill_table_genes.py
         list_genes = pickle.load(file)
     return list_genes
+
+def fill_exon_structure():
+    with open("table_exon_struct.pickle", "rb") as file: #from the program fill_table_exon_struct.py
+        list_exon_struct = pickle.load(file)
+    return list_exon_struct
+
+def fill_mutations():
+    with open("table_mutations.pickle", "rb") as file: #from the program fill_table_mutations.py
+        list_mutations = pickle.load(file)
+    return list_mutations
+
 
 connection = sqlite3.connect("mydata.db")
 cursor = connection.cursor()
@@ -41,7 +52,8 @@ CREATE TABLE IF NOT EXISTS genes (
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS exon_structure (
-    exon_id TEXT PRIMARY KEY,
+    exon_structure_random_id INTEGER PRIMARY KEY,
+    exon_id TEXT,
     begin_position INTEGER,
     begin_status TEXT,
     end_position INTEGER,
@@ -51,7 +63,8 @@ CREATE TABLE IF NOT EXISTS exon_structure (
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS mutations (
-    mutation_id INTEGER PRIMARY KEY,
+    mutations_random_id INTEGER PRIMARY KEY,
+    mutation_id INTEGER,
     pathogenicity TEXT,
     accession TEXT
 )
@@ -80,6 +93,22 @@ if row_count == 0:
     cursor.executemany("INSERT INTO genes VALUES (?, ?, ?, ?, ?, ?)", fill_genes())
 else:
     print("genes: table already completed.")
+
+print("Executing... fill table: exon_structure")
+cursor.execute(f"SELECT COUNT(*) FROM exon_structure")
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO exon_structure VALUES (?, ?, ?, ?, ?, ?, ?)", fill_exon_structure())
+else:
+    print("exon_structure: table already completed.")
+
+print("Executing... fill table: mutations")
+cursor.execute(f"SELECT COUNT(*) FROM mutations")
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO mutations VALUES (?, ?, ?, ?)", fill_mutations())
+else:
+    print("mutations: table already completed.")
 
 connection.commit()
 connection.close()
