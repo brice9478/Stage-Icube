@@ -30,6 +30,10 @@ def fill_mutations():
         list_mutations = pickle.load(file)
     return list_mutations
 
+def fill_pdi():
+    with open("table_pdi.pickle", "rb") as file: #from the program fill_table_pdi.py
+        list_pdi = pickle.load(file)
+    return list_pdi
 
 connection = sqlite3.connect("mydata.db")
 cursor = connection.cursor()
@@ -71,7 +75,8 @@ CREATE TABLE IF NOT EXISTS mutations (
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS pdi (
-    position INTEGER PRIMARY KEY,
+    pdi_random_id INTEGER PRIMARY KEY,
+    position INTEGER,
     deletion TEXT,
     insertion TEXT,
     mutation_id INTEGER
@@ -109,6 +114,14 @@ if row_count == 0:
     cursor.executemany("INSERT INTO mutations VALUES (?, ?, ?, ?)", fill_mutations())
 else:
     print("mutations: table already completed.")
+
+print("Executing... fill table: pdi")
+cursor.execute(f"SELECT COUNT(*) FROM pdi")
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO pdi VALUES (?, ?, ?, ?, ?)", fill_pdi())
+else:
+    print("pdi: table already completed.")
 
 connection.commit()
 connection.close()
