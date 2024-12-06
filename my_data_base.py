@@ -6,7 +6,9 @@ def list_species_and_id():
     with open("orthologues.pickle", "rb") as file:
         total_data = pickle.load(file)
     list_specie = []
-    counter = 0
+    list_specie.append(["Homo sapiens"])
+    list_specie[0].append(int(9606))
+    counter = 1
     for h_gene in range(0, len(total_data["genes"])):
         for ortho in range(0, len(total_data["genes"][h_gene][list(total_data["genes"][h_gene].keys())[0]])):
             list_specie.append([total_data["genes"][h_gene][list(total_data["genes"][h_gene].keys())[0]][ortho]["specie"][0]])

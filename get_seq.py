@@ -6,6 +6,7 @@ import time
 from Bio import SeqIO
 from io import StringIO
 from sys import argv
+from openpyxl import Workbook, load_workbook
 
 def get_request(gen_seq, i, max, error):
     url = "https://rest.uniprot.org/uniprotkb/search?query=("
@@ -138,9 +139,17 @@ if len(argv) == 1:
         exit(84)
     with open("orthologues.pickle", "rb") as file:
         total_data = pickle.load(file)
-    if not os.path.exists("gen_seq.pickle"):
+
+    if not os.path.exists("gen_seq.pickle") or os.path.getsize('gen_seq.pickle') == 0:
+        if not os.path.exists("GenoDENT_genes.xlsx"):
+            print("File GenoDENT_genes.xlsx not found.")
+            exit(84)
+        excel_file = load_workbook("GenoDENT_genes.xlsx")
+        content = excel_file.active
         gen_seq = []
-        counter = 0
+        for i in range(len(content['B']) - 1):
+            gen_seq.append(content['B' + str(i + 2)].value)
+        counter = len(content['B']) - 1
         for h_gene in range(0, len(total_data["genes"])):
             for ortho in range(0, len(total_data["genes"][h_gene][list(total_data["genes"][h_gene].keys())[0]])):
                 for access in range(0, len(total_data["genes"][h_gene][list(total_data["genes"][h_gene].keys())[0]][ortho]["specie"][2])):

@@ -1,6 +1,9 @@
 import pickle
 import threading
 import time
+import os
+from openpyxl import Workbook, load_workbook
+
 
 def timer(count_time, start_time):
     count_second = 0
@@ -22,8 +25,16 @@ def find_same_accession(accession, searched_list_array):
 
 with open("orthologues.pickle", "rb") as file:
     total_data = pickle.load(file)
+if not os.path.exists("GenoDENT_genes.xlsx"):
+    print("File GenoDENT_genes.xlsx not found.")
+    exit(84)
+excel_file = load_workbook("GenoDENT_genes.xlsx")
+content = excel_file.active
 list_genes = []
-counter = 0
+for i in range(len(content['B']) - 1):
+    list_genes.append([content['B' + str(i + 2)].value])
+    list_genes[i].append("Homo sapiens")
+counter = len(content['B']) - 1
 for h_gene in range(0, len(total_data["genes"])):
     for ortho in range(0, len(total_data["genes"][h_gene][list(total_data["genes"][h_gene].keys())[0]])):
         for access in range(0, len(total_data["genes"][h_gene][list(total_data["genes"][h_gene].keys())[0]][ortho]["specie"][2])):
