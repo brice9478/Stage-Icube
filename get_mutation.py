@@ -215,6 +215,8 @@ if len(argv) == 3:
             total_data = pickle.load(file)
     with open(argv[2], 'r') as file:
         for line in file:
+            if line == "\n":
+                continue
             total_data.append([line.strip()])
 
 

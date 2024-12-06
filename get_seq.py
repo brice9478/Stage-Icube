@@ -171,6 +171,8 @@ if len(argv) == 2:
             gen_seq = pickle.load(file)
     with open(argv[1], 'r') as file:
         for line in file:
+            if line == "\n":
+                continue
             gen_seq.append([line.strip()])
 
 seq_not_found = []
@@ -203,7 +205,8 @@ while threading.active_count() > 2 and iferror < 10:    #security mesure --> wai
     print("threads:", threading.active_count())
     time.sleep(1)
 
-print("No sequence found for:", seq_not_found, "\nWill retry with another url starting now.")
+if len(seq_not_found) > 0:
+    print("No sequence found for:", seq_not_found, "\nWill retry with another url starting now.")
 
 start_time[0] = time.time()
 count_time[0] = 0
