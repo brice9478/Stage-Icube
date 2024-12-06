@@ -2,4 +2,11 @@ First execute
 
 python3 get_orthologues.py
 
-That will create the file needed for the other programs
+That will create the file needed for the other programs that start with "get"
+
+If you want, you can give a file in argument to any of the "get" programs
+which contain a list of gene's accession separated by \n
+
+Next, execute all "fill" programs
+
+Then, you can finally create the database by executing my_data_base.py
