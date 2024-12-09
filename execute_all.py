@@ -1,7 +1,7 @@
 import os
 
 needed = ["fill_table_exon_structure.py", "fill_table_genes.py", "fill_table_mutations.py", "fill_table_pdi.py", "GenoDENT_genes.xlsx", "get_exon_structure.py",
-          "get_location.py", "get_mutation.py", "get_orthologues.py", "get_seq.py", "my_data_base.py"]
+          "get_location.py", "get_mutation.py", "get_orthologues.py", "get_seq.py", "create_db.py"]
 for i in range(len(needed)):
     if not os.path.exists(needed[i]):
         print("The file", needed[i], "needs to be in the current directory to execute this program.")
@@ -25,7 +25,7 @@ for i in range(len(removed)):
         os.system(str)
 
 execution = ["get_orthologues.py", "get_seq.py", "get_location.py", "get_exon_structure.py", "get_mutation.py", "fill_table_genes.py",
-             "fill_table_exon_structure.py", "fill_table_mutations.py", "fill_table_pdi.py", "my_data_base.py"]
+             "fill_table_exon_structure.py", "fill_table_mutations.py", "fill_table_pdi.py", "create_db.py"]
 for i in range(len(execution)):
     print("---------------------- Executing", execution[i], "----------------------")
     if execution[i] == "get_mutation.py":
