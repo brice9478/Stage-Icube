@@ -30,7 +30,6 @@ def get_vertebrata_id():
     return names_list, ids_list
 
 def get_request(gen_accession, total_data, nb, error):
-        print(gen_accession)
         base_url="https://lbgi.fr/api/orthoinspector/Eukaryota2023/protein/"
         complete_url = base_url + str(gen_accession) + "/orthologs"
         try:
@@ -49,7 +48,6 @@ def get_request(gen_accession, total_data, nb, error):
             return
         try:
             data = json.loads(response.text)
-            # print(data)
             counter = 0
             for i in range(len(data["data"])):
                 for check_ids in range(len(ids_list) - 1):
@@ -68,7 +66,6 @@ def get_request(gen_accession, total_data, nb, error):
                 return
             get_request(gen_accession, total_data, nb, error + 1)
             return
-        # print()
         try:
             off = 0
             while rps[off][1] != False:
@@ -134,7 +131,7 @@ if len(argv) == 1:
     original_len = len(total_data["genes"])
     for nb in range(original_len, original_len + len(content['B']) - 1):
         cell = 'B' + str(nb + 2 - original_len)
-        print(cell)
+        print("excel file's cell:", cell)
         gen_accession = content[cell].value
         rps.append([count_time[0], False])
         total_data["genes"].append({gen_accession: []})
@@ -167,7 +164,6 @@ if len(argv) == 2:
             total_data = pickle.load(file)
     original_len = len(total_data["genes"])
     for nb in range(original_len, original_len + len(list)):
-        print(nb)
         gen_accession = list[nb - original_len]
         rps.append([count_time[0], False])
         total_data["genes"].append({gen_accession: []})

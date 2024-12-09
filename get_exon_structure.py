@@ -172,7 +172,8 @@ for i in range(0, len(exon_struct) - 1, 100):
     max = 100
     if i + max > len(exon_struct) - 1:
         max = len(exon_struct) - i
-    print(i, "to", i + max, "rps :", threading.active_count() - 3)
+    if i % 1000 == 0:
+        print(i)
     rps.append([count_time[0], False])
     threading.Thread(target=get_request, daemon=True, args=(exon_struct, i, max, 0)).start()
     while len(rps) >= 30:

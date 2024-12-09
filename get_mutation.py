@@ -111,7 +111,6 @@ def good_or_evil(total_data, count, error):
         if i < len(total_data[count]) - 1:
             url = url + ", "
     url = url + "&retmode=fasta"
-    print(url)
     try:
         params = {'api_key': argv[1]} # /!\
         response = requests.get(url, timeout=10, params=params)

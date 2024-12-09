@@ -186,7 +186,8 @@ for i in range(0, len(gen_seq), 25):
     max = 25
     if i + max >= len(gen_seq):
         break
-    print(i)
+    if i % 1000 == 0:
+        print(i)
     rps.append([count_time[0], False])
     threading.Thread(target=get_request, daemon=True, args=(gen_seq, i, max, 0)).start()
     while len(rps) >= 30:
