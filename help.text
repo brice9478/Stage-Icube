@@ -10,3 +10,7 @@ which contain a list of gene's accession separated by \n
 Next, execute all "fill" programs
 
 Then, you can finally create the database by executing my_data_base.py
+
+Or, if you want, you can do:
+python3 execute_all.py
+and follow the instructions to execute all the programs needed for the db
