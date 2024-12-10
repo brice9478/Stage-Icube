@@ -37,6 +37,11 @@ def fill_pdi():
         list_pdi = pickle.load(file)
     return list_pdi
 
+def fill_orthologs():
+    with open("table_orthologs.pickle", "rb") as file: #from the program fill_table_orthologs.py
+        list_ortho = pickle.load(file)
+    return list_ortho
+
 connection = sqlite3.connect("mydata.db")
 cursor = connection.cursor()
 print("Executing... create tables")
@@ -69,7 +74,7 @@ CREATE TABLE IF NOT EXISTS exon_structure (
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS mutations (
-    mutations_random_id INTEGER PRIMARY KEY,
+    mutations_incremented_id INTEGER PRIMARY KEY,
     mutation_id INTEGER,
     pathogenicity TEXT,
     accession TEXT
@@ -77,11 +82,19 @@ CREATE TABLE IF NOT EXISTS mutations (
 """)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS pdi (
-    pdi_random_id INTEGER PRIMARY KEY,
+    pdi_incremented_id INTEGER PRIMARY KEY,
     position INTEGER,
     deletion TEXT,
     insertion TEXT,
     mutation_id INTEGER
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS orthologs (
+    ortholog_incremented_id INTEGER PRIMARY KEY,
+    ortholog_accession TEXT,
+    ortholog_of TEXT
 )
 """)
 
@@ -124,6 +137,14 @@ if row_count == 0:
     cursor.executemany("INSERT INTO pdi VALUES (?, ?, ?, ?, ?)", fill_pdi())
 else:
     print("pdi: table already completed.")
+
+print("Executing... fill table: orthologs")
+cursor.execute(f"SELECT COUNT(*) FROM orthologs")
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO orthologs VALUES (?, ?, ?)", fill_orthologs())
+else:
+    print("orthologs: table already completed.")
 
 connection.commit()
 connection.close()
