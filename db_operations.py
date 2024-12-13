@@ -16,6 +16,7 @@ def help():
     print("data example : print the first row of each table")
     print("sql : enter a sql code to be executed")
     print("structure : display the organisation of the db")
+    print("accession : display all the informations in the database that corresponds to the given gene's accession")
 
 def data_example():
     cursor.execute("SELECT * FROM species")
@@ -27,6 +28,8 @@ def data_example():
     cursor.execute("SELECT * FROM mutations")
     print(cursor.fetchall()[0])
     cursor.execute("SELECT * FROM pdi")
+    print(cursor.fetchall()[0])
+    cursor.execute("SELECT * FROM orthologs")
     print(cursor.fetchall()[0])
 
 def sql():
@@ -63,12 +66,56 @@ def structure():
     except sqlite3.Error as e:
         console.print(f"[bold red]Erreur : {e}[/bold red]")
 
+def accession():
+    response = input("Please enter a gene's accession to get informations about it: ")
+    try:
+        cursor.execute("SELECT * FROM genes WHERE accession = ?", (response,))
+        result = cursor.fetchall()
+        print("- - - - - - - - - -")
+        print(f"Accession: {result[0][0]}\nSpecie: {result[0][1]}\nSequence: {result[0][2]}\nChromosome: {result[0][3]}\nStart: {result[0][4]}\nEnd: {result[0][5]}")
+    except:
+        print(f"{response} doesn't correspond to any data in the table \"genes\"")
+    print()
+    try:
+        cursor.execute("SELECT * FROM exon_structure WHERE accession = ?", (response,))
+        result = cursor.fetchall()
+        print("- - Exon structure - -")
+        print(f"Number of exons: {len(result)}")
+        for i in range(len(result)):
+            print(f"- {i + 1} -\nExon id: {result[i][1]}")
+            print(f"Begin position: {result[i][2]} and begin status: {result[i][3]}")
+            print(f"End position: {result[i][4]} and end status: {result[i][5]}")
+    except:
+        print(f"{response} doesn't correspond to any data in the table \"exon_structure\"")
+    print()
+    try:
+        cursor.execute("SELECT * FROM mutations WHERE accession = ?", (response,))
+        result = cursor.fetchall()
+        print("- - Mutations - -")
+        print(f"Number of possible mutations: {len(result)}")
+        for i in range(len(result)):
+            print(f"\nMutation id: {result[i][1]}\nPathogenicity: {result[i][2]}")
+            try:
+                cursor.execute("SELECT * FROM pdi WHERE mutation_id = ?", (result[i][1],))
+                pdi = cursor.fetchall()
+                print("- Chromosome's modifications -")
+                for k in range(len(pdi)):
+                    print(f"\tPosition: {pdi[k][1]}\n\tDeletion: {pdi[k][2]}\n\tInsertion: {pdi[k][3]}")
+            except:
+                print(f"No data for the chromosome's modifications of the mutation {result[i][1]}")
+    except:
+        print(f"{response} doesn't correspond to any data in the table \"mutations\"")
+        print("Note: the table \"mutations\" only contains informations on human genes.")
+    print("- - - - - - - - - -")
+
+
+
 
 print("Welcome in the database interface. Here, you can do some operations on the database.")
 print("If you want to know all the possible operations, please enter \"help\".")
-commands = ["help", "data example", "sql", "structure"]
-functions = [help, data_example, sql, structure]
-tables = ["species", "genes", "exon_structure", "mutations", "pdi"]
+commands = ["help", "data example", "sql", "structure", "accession"]
+functions = [help, data_example, sql, structure, accession]
+# tables = ["species", "genes", "exon_structure", "mutations", "pdi"]
 while True:
     print(">> ", end = '')
     answer = input()
