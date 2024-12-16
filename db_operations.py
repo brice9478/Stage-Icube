@@ -29,6 +29,8 @@ def data_example():
     print(cursor.fetchall()[0])
     cursor.execute("SELECT * FROM pdi")
     print(cursor.fetchall()[0])
+    cursor.execute("SELECT * FROM human_genes_to_orthologs")
+    print(cursor.fetchall()[0])
     cursor.execute("SELECT * FROM orthologs")
     print(cursor.fetchall()[0])
 
@@ -68,10 +70,11 @@ def structure():
 
 def accession():
     response = input("Please enter a gene's accession to get informations about it: ")
+    print("- - - - - - - - - -")
     try:
         cursor.execute("SELECT * FROM genes WHERE accession = ?", (response,))
         result = cursor.fetchall()
-        print("- - - - - - - - - -")
+        specie = result[0][1]
         print(f"Accession: {result[0][0]}\nSpecie: {result[0][1]}\nSequence: {result[0][2]}\nChromosome: {result[0][3]}\nStart: {result[0][4]}\nEnd: {result[0][5]}")
     except:
         print(f"{response} doesn't correspond to any data in the table \"genes\"")
@@ -106,6 +109,23 @@ def accession():
     except:
         print(f"{response} doesn't correspond to any data in the table \"mutations\"")
         print("Note: the table \"mutations\" only contains informations on human genes.")
+    print()
+    try:
+        cursor.execute("SELECT * FROM human_genes_to_orthologs JOIN orthologs ON human_genes_to_orthologs.group_id = orthologs.group_id")
+        result = cursor.fetchall()
+        if specie == "Homo sapiens":
+            print("- - Orthologs - -")
+            for i in range(len(result)):
+                if result[i][1] == response:
+                    print(f"{result[i][4]} - ", end='')
+        else:
+            print("- - Ortholog of - -")
+            for i in range(len(result)):
+                if result[i][4] == response:
+                    print(f"{result[i][1]} - ", end='')
+        print()
+    except:
+        print(f"{response} doesn't correspond to any data in the tables \"orthologs\" and \"human_genes_to_orthologs\"")
     print("- - - - - - - - - -")
 
 
