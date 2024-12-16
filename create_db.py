@@ -42,6 +42,11 @@ def fill_orthologs():
         list_ortho = pickle.load(file)
     return list_ortho
 
+def fill_human_genes_to_orthologs():
+    with open("table_human_genes_to_orthologs.pickle", "rb") as file: #from the program fill_table_orthologs.py
+        list_h_genes_to_ortho = pickle.load(file)
+    return list_h_genes_to_ortho
+
 connection = sqlite3.connect("mydata.db")
 cursor = connection.cursor()
 print("Executing... create tables")
@@ -93,8 +98,15 @@ CREATE TABLE IF NOT EXISTS pdi (
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS orthologs (
     ortholog_incremented_id INTEGER PRIMARY KEY,
-    ortholog_accession TEXT,
-    ortholog_of TEXT
+    group_id INTEGER,
+    ortholog_accession TEXT
+)
+""")
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS human_genes_to_orthologs (
+    group_id INTEGER PRIMARY KEY,
+    human_gene_accession TEXT
 )
 """)
 
@@ -145,6 +157,14 @@ if row_count == 0:
     cursor.executemany("INSERT INTO orthologs VALUES (?, ?, ?)", fill_orthologs())
 else:
     print("orthologs: table already completed.")
+
+print("Executing... fill table: human_genes_to_orthologs")
+cursor.execute(f"SELECT COUNT(*) FROM human_genes_to_orthologs")
+row_count = cursor.fetchone()[0]
+if row_count == 0:
+    cursor.executemany("INSERT INTO human_genes_to_orthologs VALUES (?, ?)", fill_human_genes_to_orthologs())
+else:
+    print("human_genes_to_orthologs: table already completed.")
 
 connection.commit()
 connection.close()
