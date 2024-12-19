@@ -14,3 +14,9 @@ Then, you can finally create the database by executing create_db.py
 Or, if you want, you can do:
 python3 execute_all.py
 and follow the instructions to execute all the programs needed for the db
+
+
+Once the db mydata.db created, you can execute the db_operations.py program
+to use the informations in the db.
+Note : if the db was not created with the default files, you might run into
+some problems (with the stats for example)

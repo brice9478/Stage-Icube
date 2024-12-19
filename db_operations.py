@@ -12,11 +12,12 @@ cursor = connection.cursor()
 def help():
     print("Here is a list of the commands you can execute.")
     print("help : you're here")
-    print("exit : stop the program")
-    print("data example : print the first row of each table")
+    print("exit : stops the program")
+    print("data example : prints the first row of each table")
     print("sql : enter a sql code to be executed")
-    print("structure : display the organisation of the db")
-    print("accession : display all the informations in the database that corresponds to the given gene's accession")
+    print("structure : displays the organisation of the db")
+    print("accession : displays all the informations in the database that corresponds to the given gene's accession")
+    print("stats : gives global stats about the data in the db")
 
 def data_example():
     cursor.execute("SELECT * FROM species")
@@ -128,13 +129,27 @@ def accession():
         print(f"{response} doesn't correspond to any data in the tables \"orthologs\" and \"human_genes_to_orthologs\"")
     print("- - - - - - - - - -")
 
-
+def stats():
+    print("- - Global statistics (for stats on a specific gene, please try with the \"accession\" command) - -")
+    cursor.execute("SELECT * FROM species")
+    result = cursor.fetchall()
+    print(f"Number of species in the \"species\" table : {len(result)}")
+    cursor.execute("SELECT * FROM genes")
+    result = cursor.fetchall()
+    print(f"Number of genes in the \"genes\" table : {len(result)} (or 510 human genes and a total of {len(result) - 510} different orthologs)")
+    cursor.execute("SELECT * FROM orthologs")
+    result = cursor.fetchall()
+    print(f"Average number of orthologs per human gene : {round(len(result) / 510, 2)}")
+    cursor.execute("SELECT * FROM mutations")
+    result = cursor.fetchall()
+    print(f"Total number of possible mutations in human teeth : {len(result)}")
+    print(f"Average number of mutations per human genes : {round(len(result) / 510, 2)}")
 
 
 print("Welcome in the database interface. Here, you can do some operations on the database.")
 print("If you want to know all the possible operations, please enter \"help\".")
-commands = ["help", "data example", "sql", "structure", "accession"]
-functions = [help, data_example, sql, structure, accession]
+commands = ["help", "data example", "sql", "structure", "accession", "stats"]
+functions = [help, data_example, sql, structure, accession, stats]
 # tables = ["species", "genes", "exon_structure", "mutations", "pdi"]
 while True:
     print(">> ", end = '')
