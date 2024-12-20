@@ -1,3 +1,5 @@
+- - - HOW TO USE - - -
+
 First execute
 
 python3 get_orthologues.py
@@ -11,6 +13,7 @@ Next, execute all "fill" programs
 
 Then, you can finally create the database by executing create_db.py
 
+ALTERNATIVE:
 Or, if you want, you can do:
 python3 execute_all.py
 and follow the instructions to execute all the programs needed for the db
