@@ -25,7 +25,7 @@ for i in range(len(removed)):
         os.system(str)
 
 execution = ["get_orthologues.py", "get_seq.py", "get_location.py", "get_exon_structure.py", "get_mutation.py", "fill_table_genes.py",
-             "fill_table_exon_structure.py", "fill_table_mutations.py", "fill_table_pdi.py", "create_db.py"]
+             "fill_table_exon_structure.py", "fill_table_mutations.py", "fill_table_pdi.py", "fill_table_orthologs.py", "create_db.py"]
 for i in range(len(execution)):
     print("---------------------- Executing", execution[i], "----------------------")
     if execution[i] == "get_mutation.py":
