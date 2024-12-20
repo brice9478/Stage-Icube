@@ -1,5 +1,3 @@
-import mysql.connector
-from sshtunnel import SSHTunnelForwarder
 from sys import argv
 import sqlite3
 import pickle
@@ -17,7 +15,7 @@ def help():
     print("sql : enter a sql code to be executed")
     print("structure : displays the organisation of the db")
     print("accession : displays all the informations in the database that corresponds to the given gene's accession")
-    print("stats : gives global stats about the data in the db")
+    print("stats : gives different stats about the data in the db")
 
 def data_example():
     cursor.execute("SELECT * FROM species")
@@ -150,7 +148,6 @@ print("Welcome in the database interface. Here, you can do some operations on th
 print("If you want to know all the possible operations, please enter \"help\".")
 commands = ["help", "data example", "sql", "structure", "accession", "stats"]
 functions = [help, data_example, sql, structure, accession, stats]
-# tables = ["species", "genes", "exon_structure", "mutations", "pdi"]
 while True:
     print(">> ", end = '')
     answer = input()
