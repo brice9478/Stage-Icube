@@ -1,6 +1,5 @@
 rm orthologues.pickle
 rm exon_struct.pickle
-rm exon_struct.pickle
 rm gen_mutation.pickle
 rm gen_loc.pickle
 rm gen_seq.pickle
