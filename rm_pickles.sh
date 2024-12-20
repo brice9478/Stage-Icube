@@ -1,0 +1,12 @@
+rm orthologues.pickle
+rm exon_struct.pickle
+rm exon_struct.pickle
+rm gen_mutation.pickle
+rm gen_loc.pickle
+rm gen_seq.pickle
+rm table_genes.pickle
+rm table_mutations.pickle
+rm table_pdi.pickle
+rm table_exon_struct.pickle
+rm table_human_genes_to_orthologs.pickle
+rm table_orthologs.pickle
