@@ -57,7 +57,7 @@ def get_request(gen_accession, total_data, nb, error):
                         counter += 1
         except:
             if error >= 5:
-                total_data["genes"][nb][gen_accession].append("Aknown")
+                total_data["genes"][nb][gen_accession].append("Unknown")
                 off = 0
                 while rps[off][1] != False:
                     off += 1

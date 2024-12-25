@@ -66,16 +66,16 @@ for i in range(len(list_genes)):
     if position != -1:
         list_genes[i].append(gen_seq[position][1])
     else:
-        list_genes[i].append("Aknown")
+        list_genes[i].append("Unknown")
     #add genome location (chromosome, start & end)
     if gen_loc[i][0] == list_genes[i][0]:
         position = i
     else:
         position = find_same_accession(list_genes[i][0], gen_loc)
     if position != -1:
-        if len(gen_loc[position]) == 1 or gen_loc[position][1] == "Aknown":
+        if len(gen_loc[position]) == 1 or gen_loc[position][1] == "Unknown":
             for a in range(3):
-                list_genes[i].append("Aknown")
+                list_genes[i].append("Unknown")
         else:
             list_genes[i].append(gen_loc[position][2])
             list_genes[i].append(gen_loc[position][4])

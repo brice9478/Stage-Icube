@@ -8,7 +8,7 @@ count = 0
 for i in range(len(list_mutations)):
     if i % 100 == 0:
         print(i)
-    if len(list_mutations[i]) <= 1 or list_mutations[i][1] == "Aknown":
+    if len(list_mutations[i]) <= 1 or list_mutations[i][1] == "Unknown":
         continue
     for k in range(1, len(list_mutations[i])):
         try:

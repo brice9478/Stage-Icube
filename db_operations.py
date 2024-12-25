@@ -159,7 +159,7 @@ while True:
             exists = True
             functions[i]()
     if exists == False:
-        print("Aknown command. Please try again with \"help\"")
+        print("Unknown command. Please try again with \"help\"")
 
 connection.commit()
 connection.close()

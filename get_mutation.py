@@ -73,7 +73,7 @@ def divide_and_conquer(total_data, count, error, rps):
         response = requests.get(url, timeout=10, params=params)
     except:
         if error >= 5:
-            total_data[count].append(["Aknown"])
+            total_data[count].append(["Unknown"])
             off = 0
             while rps[off][1] != False:
                 off += 1
@@ -116,7 +116,7 @@ def good_or_evil(total_data, count, error):
         response = requests.get(url, timeout=10, params=params)
     except:
         if error >= 5:
-            total_data[count].append(["Aknown"])
+            total_data[count].append(["Unknown"])
             off = 0
             while rps[off][1] != False:
                 off += 1
@@ -142,7 +142,7 @@ def good_or_evil(total_data, count, error):
         if len(total_data[count][glc + 1]) > 2:
             continue
         if data[positions[glc] + 2] == "/description": #sometimes, germline_classification doesn't have a description. Ex : id 3257758
-            total_data[count][glc + 1].append("Aknown")
+            total_data[count][glc + 1].append("Unknown")
         else:
             total_data[count][glc + 1].append(data[positions[glc] + 2])
 

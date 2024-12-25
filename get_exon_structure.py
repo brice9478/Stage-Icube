@@ -31,7 +31,7 @@ def get_request(exon_struct, i, max, error):
         response = requests.get(url, timeout=10)
     except:
         if error >= 5:
-            exon_struct[i].append(["Aknown"])
+            exon_struct[i].append(["Unknown"])
             off = 0
             while rps[off][1] != False:
                 off += 1
@@ -52,7 +52,7 @@ def get_request(exon_struct, i, max, error):
             continue
         while data[index] != exon_struct[i + k][0]:
             if index >= len(data) - 1:
-                exon_struct[i + k].append("Aknown")
+                exon_struct[i + k].append("Unknown")
                 break
             index += 1
         if index >= len(data) - 1:

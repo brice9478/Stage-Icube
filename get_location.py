@@ -29,7 +29,7 @@ def get_request(gen_loc, i, max, error):
         response = requests.get(url, timeout=10)
     except:
         if error >= 5:
-            gen_loc[i].append(["Aknown"])
+            gen_loc[i].append(["Unknown"])
             off = 0
             while rps[off][1] != False:
                 off += 1
@@ -50,7 +50,7 @@ def get_request(gen_loc, i, max, error):
             continue
         while data[index] != gen_loc[i + k][0]:
             if index >= len(data) - 1:
-                gen_loc[i + k].append("Aknown")
+                gen_loc[i + k].append("Unknown")
                 break
             index += 1
         if index >= len(data):
@@ -64,7 +64,7 @@ def get_request(gen_loc, i, max, error):
                 while data[index] or data[index] == "accession":
                     if data[index] == "id" and data[index + 2] == "start":
                         gen_loc[i + k].append("chromosome")
-                        gen_loc[i + k].append("Aknown")
+                        gen_loc[i + k].append("Unknown")
                         for info in range(2, 6):
                             gen_loc[i + k].append(data[index + info])
             if index >= len(data):
@@ -72,7 +72,7 @@ def get_request(gen_loc, i, max, error):
             if data[index] == "chromosome" and data[index + 2] != "start":
                 index += 1
             if data[index] == "accession":
-                gen_loc[i + k].append("Aknown")
+                gen_loc[i + k].append("Unknown")
                 break
         if index >= len(data) - 1 or data[index] == "accession" or data[index + 2] != "start":
             continue

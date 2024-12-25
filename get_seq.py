@@ -20,7 +20,7 @@ def get_request(gen_seq, i, max, error):
         response = requests.get(url, timeout=10)
     except:
         if error >= 5:
-            gen_seq[i].append("Aknown")
+            gen_seq[i].append("Unknown")
             off = 0
             while rps[off][1] != False:
                 off += 1
@@ -36,7 +36,7 @@ def get_request(gen_seq, i, max, error):
     not_found = 0
     for k in range(0, max):
         if not "|" + gen_seq[i + k][0] + "|" in data:
-            gen_seq[i + k].append("Aknown")
+            gen_seq[i + k].append("Unknown")
             not_found += 1
             seq_not_found.append(gen_seq[i + k][0])
             continue
@@ -57,7 +57,7 @@ def get_request(gen_seq, i, max, error):
             except:
                 print("-----/!\\ ERROR ON BACKUP SYSTEM /!\\-----")
                 print("-----/!\\ Problematic element : ", gen_seq[i + k][0], "/!\\-----")
-                gen_seq[i + k].append("Aknown")
+                gen_seq[i + k].append("Unknown")
             time.sleep(0.1)
     try:
         off = 0
@@ -67,7 +67,7 @@ def get_request(gen_seq, i, max, error):
     except:
         return
 
-def retry_aknowns(gen_seq, i, error):
+def retry_Unknowns(gen_seq, i, error):
     print(gen_seq[i][0], "at", i)
     url = "http://rest.uniprot.org/unisave/" + gen_seq[i][0] + "?format=fasta"
     try:
@@ -75,9 +75,9 @@ def retry_aknowns(gen_seq, i, error):
     except:
         if error >= 5:
             if len(gen_seq[i]) == 1:
-                gen_seq[i].append("Aknown")
+                gen_seq[i].append("Unknown")
             else:
-                gen_seq[i][1] = "Aknown"
+                gen_seq[i][1] = "Unknown"
             off = 0
             while rps[off][1] != False:
                 off += 1
@@ -85,7 +85,7 @@ def retry_aknowns(gen_seq, i, error):
             print("Request : all attempts failed.")
             return
         print("/!\ ---------> loop ? Connection error. Request sent again with url :", url)
-        retry_aknowns(gen_seq, i, error + 1)
+        retry_Unknowns(gen_seq, i, error + 1)
         return
     data = ''.join(response.text)
     Seq = StringIO(data)
@@ -97,9 +97,9 @@ def retry_aknowns(gen_seq, i, error):
             gen_seq[i][1] = str(protSeq[0].seq)
     except:
         if len(gen_seq[i]) == 1:
-            gen_seq[i].append("Aknown")
+            gen_seq[i].append("Unknown")
         else:
-            gen_seq[i][1] = "Aknown"
+            gen_seq[i][1] = "Unknown"
         print(gen_seq[i][0], ": sequence couldn't be found.")
     try:
         off = 0
@@ -213,9 +213,9 @@ start_time[0] = time.time()
 count_time[0] = 0
 rps = []
 for i in range(0, len(gen_seq)):
-    if gen_seq[i][1] == "Aknown":
+    if gen_seq[i][1] == "Unknown":
         rps.append([count_time[0], False])
-        threading.Thread(target=retry_aknowns, daemon=True, args=(gen_seq, i, 0)).start()
+        threading.Thread(target=retry_Unknowns, daemon=True, args=(gen_seq, i, 0)).start()
         while len(rps) >= 10:
             if rps[0][1] != False and count_time[0] - rps[0][1] > 1:
                 break
